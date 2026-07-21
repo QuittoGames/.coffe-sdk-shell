@@ -9,9 +9,21 @@
 # Fonte: https://www.nerdfonts.com/cheat-sheet
 # Set:   Font Awesome (nf-fa-) / Codicons (nf-cod-) / Octicons (nf-oct-)
 
-# Coffe SDK Icons
+# ======================================
+# Project Identity
+# ======================================
 
-COFFE_SDK_ICON=""
+# Coffee SDK — identidade visual com ícones representando
+# Coffe, Linux, Fedora, shell/bash, Python e C/C++.
+
+COFFE_SDK_ICON=""               # nf-custom-c — xícara de café
+
+ICON_LINUX=$'\uf17c'             # nf-fa-linux — Tux/pinguim
+ICON_FEDORA=$'\uf30a'            # nf-linux-fedora — logo Fedora
+ICON_BASH=$'\ue795'              # nf-dev-terminal — shell/bash
+ICON_PYTHON=$'\ue73c'            # nf-dev-python — Python
+ICON_CPP=$'\ue61d'               # nf-dev-cplusplus — C/C++
+ICON_SHELL_SDK=$'\uf120'         # nf-fa-terminal — este projeto (SDK shell)
 
 # ======================================
 # UI / Actions
@@ -171,18 +183,23 @@ ICON_TROPHY=$'\uf091'          # nf-fa-trophy
 ICON_SIGNAL=$'\uf012'          # nf-fa-signal
 
 # ======================================
-# Specific SDK icons (aliases)
+# SDK-specific icons (aliases)
 # ======================================
 
 ICON_SDK=$'\uf1d3'             # nf-fa-git — placeholder SDK logo
-ICON_FZF=$'\uf120'             # nf-fa-terminal — fzf icon
+ICON_FZF=$'\uf120'             # nf-fa-terminal — fzf
 ICON_ENV=$'\uf0c7'             # nf-fa-save — env file
-ICON_MODULE=$'\uf085'          # nf-fa-gears — module
-ICON_PLUGIN=$'\uf12e'          # nf-fa-plug
-ICON_DOCS=$'\uf02d'            # nf-fa-book — documentation
+ICON_MODULE=$'\uf085'          # nf-fa-gears — módulo
+ICON_PLUGIN=$'\uf12e'          # nf-fa-plug — plugin
+ICON_DOCS=$'\uf02d'            # nf-fa-book — documentação
 ICON_CONFIG=$'\uf013'          # nf-fa-cog — config
 ICON_TERMINAL_ALT=$'\uf120'    # nf-fa-terminal
-ICON_WINDOW=$'\uf2d0'          # nf-fa-window-maximize
+ICON_WINDOW=$'\uf2d0'          # nf-fa-window-maximize — janela
+
+# Identity shorthands (usados nos módulos)
+ICON_COFFE=$'\ue815'           # nf-custom-c — xícara (alias)
+ICON_PENGUIN=$'\uf17c'         # nf-fa-linux — Linux/Tux
+ICON_SHELL=$'\ue795'           # nf-dev-terminal — shell script
 
 # ======================================
 # Debug helper

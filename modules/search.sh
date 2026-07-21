@@ -5,7 +5,7 @@
 #
 # Depende de: ui/dialogs.sh (ui::select_file, ui::grep)
 
-search() {
+coffe::search() {
     local query="${1:-}"
 
     local file
@@ -18,11 +18,11 @@ search() {
     code "$file"
 }
 
-search_in() {
-    local query="$1"
+coffe::search_in() {
+    local query="${1:-}"
 
     [[ -z "$query" ]] && {
-        echo "Usage: search_in <text>"
+        echo "Usage: search_in <pattern>"
         return 1
     }
 
@@ -31,5 +31,10 @@ search_in() {
 
     [[ -z "$result" ]] && return
 
-    code -g "$(cut -d: -f1,2 <<< "$result")"
+    # rg output: file:line:content
+    # Extrai só file:line para o --goto do code
+    local file_line
+    file_line=$(cut -d: -f1,2 <<< "$result")
+
+    code -g "$file_line"
 }

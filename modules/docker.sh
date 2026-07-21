@@ -5,19 +5,19 @@
 #
 # Depende de: ui/dialogs.sh
 
-docker::ps() {
+coffe::docker::ps() {
     docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}" |
     fzf::docker \
-        --prompt="󰡨 Docker PS > " \
+        --prompt="${ICON_DOCKER} PS > " \
         --header-lines=1 \
         --preview='echo {} | awk "{print \$1}" | xargs docker inspect'
 }
 
-docker::logs() {
+coffe::docker::logs() {
     local container
     container=$(docker ps --format "{{.ID}} {{.Names}}" |
         fzf::docker \
-            --prompt="󰡨 Docker Logs > " \
+            --prompt="${ICON_DOCKER} Logs > " \
             --preview='echo {} | awk "{print \$1}" | xargs docker logs --tail 50' |
         awk '{print $1}')
 
@@ -26,11 +26,11 @@ docker::logs() {
     docker logs -f "$container"
 }
 
-docker::stop() {
+coffe::docker::stop() {
     local container
     container=$(docker ps --format "{{.ID}} {{.Names}} {{.Status}}" |
         fzf::docker \
-            --prompt="󰡨 Stop > " \
+            --prompt="${ICON_DOCKER} Stop > " \
             --preview='echo {} | awk "{print \$1}" | xargs docker inspect' |
         awk '{print $1}')
 
@@ -39,11 +39,11 @@ docker::stop() {
     docker stop "$container"
 }
 
-docker() {
+coffe::docker() {
     case "${1:-}" in
-        ps)    shift; docker::ps "$@" ;;
-        logs)  shift; docker::logs "$@" ;;
-        stop)  shift; docker::stop "$@" ;;
+        ps)    shift; coffe::docker::ps "$@" ;;
+        logs)  shift; coffe::docker::logs "$@" ;;
+        stop)  shift; coffe::docker::stop "$@" ;;
         *)     command docker "$@" ;;
     esac
 }

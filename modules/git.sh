@@ -5,28 +5,28 @@
 #
 # Depende de: ui/dialogs.sh (ui::select_file, ui::select_dir)
 
-git::checkout() {
+coffe::git::checkout() {
     git branch -a |
     fzf::git \
-        --prompt="󰊢 Git Branch > " \
+        --prompt="${ICON_GIT} Branch > " \
         --preview="git log --oneline --graph --decorate {}" |
     sed 's/^\* //; s/^remotes\/origin\///' |
     xargs git checkout
 }
 
-git::log() {
+coffe::git::log() {
     git log \
         --oneline \
         --graph \
         --decorate \
         --all |
     fzf::git \
-        --prompt="󰊢 Git Log > " \
+        --prompt="${ICON_GIT} Log > " \
         --ansi \
         --preview='echo {} | awk "{print \$2}" | xargs git show --stat'
 }
 
-git::diff() {
+coffe::git::diff() {
     local files
     files=$(git diff --name-only | ui::select_file)
 
@@ -35,19 +35,30 @@ git::diff() {
     git diff "$files"
 }
 
-git::status() {
+coffe::git::status() {
     git status --short |
     fzf::git \
         --prompt="󰊢 Git Status > " \
-        --preview='git diff --color -- "$(cut -c4- <<< "{}")"'
+        --preview='
+            f=$(echo {} | cut -c4-);
+            s=$(echo {} | cut -c1-2);
+            if [ "$s" = "??" ]; then
+                echo "  untracked  $f";
+                bat --color=always "$f" 2>/dev/null;
+            elif [ "$s" = "M " ]; then
+                git diff --cached --color=always -- "$f" 2>/dev/null;
+            else
+                git diff --color=always -- "$f" 2>/dev/null;
+            fi
+        '
 }
 
-git() {
+coffe::git() {
     case "${1:-}" in
-        checkout) shift; git::checkout "$@" ;;
-        log)      shift; git::log "$@" ;;
-        diff)     shift; git::diff "$@" ;;
-        status)   shift; git::status "$@" ;;
+        checkout) shift; coffe::git::checkout "$@" ;;
+        log)      shift; coffe::git::log "$@" ;;
+        diff)     shift; coffe::git::diff "$@" ;;
+        status)   shift; coffe::git::status "$@" ;;
         *)        command git "$@" ;;
     esac
 }

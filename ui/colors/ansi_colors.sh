@@ -34,6 +34,7 @@ CLR_SKY_BLUE=$'\033[38;2;56;189;248m'     # #38BDF8 — Cyan azul moderno (Ponte
 CLR_ICE_BLUE=$'\033[38;2;147;197;253m'    # #93C5FD — Azul glacial (Glow de seleção)
 
 # ACENTOS DE CAFÉ (Secundários / Suportes)
+CLR_RED=$'\033[38;2;206;100;100m'         # #CE6464 — Terracota (Erro/Alerta)
 CLR_CARAMEL=$'\033[38;2;198;154;114m'     # #C69A72 — Caramelo quente (Destaque sutil)
 CLR_GREEN=$'\033[38;2;120;200;154m'       # #78C89A — Verde Matcha (Sucesso/Marker)
 CLR_ORANGE=$'\033[38;2;224;154;103m'      # #E09A67 — Canela (Warning/Spinner)
@@ -78,6 +79,7 @@ HEX_BLUE="#4F82E6"
 HEX_LIGHT_BLUE="#78A9FF"
 HEX_SKY_BLUE="#38BDF8"
 HEX_ICE_BLUE="#93C5FD"
+HEX_RED="#CE6464"
 HEX_CARAMEL="#C69A72"
 HEX_GREEN="#78C89A"
 HEX_ORANGE="#E09A67"

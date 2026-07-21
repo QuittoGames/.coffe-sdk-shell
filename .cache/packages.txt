@@ -1,0 +1,15 @@
+bash
+coreutils
+findutils
+sed
+gawk
+util-linux
+git
+fzf
+fd-find
+ripgrep
+bat
+eza
+jq
+wl-clipboard
+oh-my-bash

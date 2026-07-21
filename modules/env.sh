@@ -7,7 +7,7 @@
 
 ENV_ROOT="$HOME/.secrets"
 
-env::list() {
+coffe::env::list() {
     if [[ ! -d "$ENV_ROOT" ]]; then
         echo "${ICON_BAN} No secrets directory found"
         return 1
@@ -39,7 +39,7 @@ env::list() {
     code "$ENV_ROOT/$file"
 }
 
-env::edit() {
+coffe::env::edit() {
     local name="$1"
 
     local file
@@ -53,7 +53,7 @@ env::edit() {
     code "$file"
 }
 
-env::create() {
+coffe::env::create() {
     declare -A folders=(
         ["services"]="GitHub Discord Outlook"
         ["ai"]="OpenAI Anthropic OpenRouter"
@@ -95,7 +95,7 @@ EOF
     echo "${ICON_LOCATION} Location: $ENV_ROOT"
 }
 
-env::load() {
+coffe::env::load() {
     local name="$1"
 
     local file
@@ -111,12 +111,12 @@ env::load() {
     echo "${ICON_CHECK} $name loaded"
 }
 
-env() {
+coffe::env() {
     case "${1:-}" in
-        list)   env::list ;;
-        create) env::create ;;
-        edit)   shift; env::edit "$@" ;;
-        load)   shift; env::load "$@" ;;
+        list)   coffe::env::list ;;
+        create) coffe::env::create ;;
+        edit)   shift; coffe::env::edit "$@" ;;
+        load)   shift; coffe::env::load "$@" ;;
         *)
             echo "
                     ${ICON_MICROCHIP} ENV Manager

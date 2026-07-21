@@ -5,6 +5,9 @@
 
 COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}"
 
+# Config
+source "$COFFE_SDK_ROOT/config/packages.sh"
+
 # UI Layer
 source "$COFFE_SDK_ROOT/ui/icons.sh"
 source "$COFFE_SDK_ROOT/ui/theme/coffe_theme.sh"
@@ -17,47 +20,85 @@ source "$COFFE_SDK_ROOT/modules/env.sh"
 source "$COFFE_SDK_ROOT/modules/git.sh"
 source "$COFFE_SDK_ROOT/modules/docker.sh"
 
-version() {
-    local data_file="${COFFE_SDK_ROOT}/data/data.json"
+export DEBUG=$(jq -r '.config.debug' "$COFFE_SDK_ROOT/data/info.json")
 
-    # Trava de segurança caso o arquivo não exista
+version() {
+    local data_file="${COFFE_SDK_ROOT}/data/info.json"
+
     if [[ ! -f "$data_file" ]]; then
-        echo -e "\033[31m${ICON_WARNING:-!} Erro: Arquivo de dados não encontrado em $data_file\033[0m" >&2
+        echo -e "${CLR_RED:-${CLR_RESET}}${ICON_WARNING:-!} Erro: Arquivo de dados não encontrado em $data_file${CLR_RESET}" >&2
         return 1
     fi
 
-    # Leitura dos dados do JSON
     local name version author
-    read -r name version author < <(
-        jq -r '[.name, .version, .author] | @tsv' "$data_file" 2>/dev/null
+    IFS=$'\t' read -r name version author < <(
+        jq -r '[.name, .version, .createdBy] | @tsv' "$data_file" 2>/dev/null
     )
 
-    # Cores ANSI
-    local c_reset="\033[0m"
-    local c_bold="\033[1m"
-    local c_dim="\033[2m"
-    local c_cyan="\033[36m"
-    local c_green="\033[32m"
-    local c_yellow="\033[33m"
-
-    # Ícones aproveitando a sua tabela icons.sh (com fallbacks)
     local icon_app="${COFFE_SDK_ICON:-☕}"
+    local icon_os="${ICON_LINUX:-}"
+    local icon_distro="${ICON_FEDORA:-}"
+    local icon_shell="${ICON_BASH:-}"
     local icon_version="${ICON_TAG:-🏷️}"
     local icon_author="${ICON_USER:-👤}"
 
-    # Saída formatada estilo Card CLI
     echo -e ""
-    echo -e "  ${c_cyan}${c_bold}${icon_app}  ${name}${c_reset}"
-    echo -e "  ${c_dim}──────────────────────────────${c_reset}"
-    echo -e "   ${c_green}${icon_version}${c_reset}  ${c_bold}Versão:${c_reset}  ${c_yellow}v${version}${c_reset}"
-    echo -e "   ${c_cyan}${icon_author}${c_reset}  ${c_bold}Autor:${c_reset}   ${author:-Desconhecido}"
-    echo -e "  ${c_dim}──────────────────────────────${c_reset}"
-    echo -e ""
+    echo -e "  ${CLR_BLUE}${CLR_BOLD}${icon_app}  ${name}${CLR_RESET}"
+    echo -e "  ${CLR_DIM}${ICON_COFFE}${CLR_RESET}${CLR_DIM}────────────────────────────────────${CLR_RESET}"
+    echo -e "   ${CLR_GREEN}${icon_version}${CLR_RESET}  ${CLR_BOLD}Versão:${CLR_RESET}  ${CLR_CARAMEL}v${version}${CLR_RESET}"
+    echo -e "   ${CLR_SKY_BLUE}${icon_author}${CLR_RESET}  ${CLR_BOLD}Autor:${CLR_RESET}   ${CLR_CREAM}${author:-Quitto}${CLR_RESET}"
+    echo -e "   ${icon_os} ${CLR_DIM}Linux${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${icon_distro} ${CLR_DIM}Fedora${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${icon_shell} ${CLR_DIM}Bash${CLR_RESET}"
+    echo -e "  ${CLR_DIM}${ICON_COFFE}────────────────────────────────────${CLR_RESET}"
+        echo -e ""
 }
+
+# Auto-install dependencies
+coffe::packages::install
 
 # Debug
 if [[ "$DEBUG" == "true" ]]; then
-    echo " Coffee SDK"
-    echo "   󰍉 FZF Theme"
-    echo "   󰣇 Modules: search env git docker"
+    echo "${CLR_BLUE}${COFFE_SDK_ICON} ${CLR_BOLD}Coffee SDK${CLR_RESET} ${CLR_DIM}loaded${CLR_RESET}"
+    echo "  ${ICON_SHELL}  ${CLR_DIM}Shell:${CLR_RESET}  search env git docker"
+    echo "  ${ICON_PYTHON}  ${CLR_DIM}Python:${CLR_RESET} SDK (future)"
+    echo "  ${ICON_CPP}  ${CLR_DIM}C/C++:${CLR_RESET}  SDK (future)"
+    echo "  ${ICON_LINUX} ${CLR_DIM}Linux${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${ICON_FEDORA} ${CLR_DIM}Fedora${CLR_RESET}"
 fi
+
+# ======================================
+# CLI dispatcher
+# ======================================
+# Uso: coffe <search|search-in|env|git|docker|packages> [args...]
+
+coffe() {
+    local cmd="${1:-}"
+    [[ -z "$cmd" ]] && {
+        echo "${COFFE_SDK_ICON}  ${CLR_BOLD}${CLR_BLUE}Coffee SDK${CLR_RESET}  ${CLR_DIM}— CLI${CLR_RESET}"
+        echo ""
+        echo "  ${CLR_DIM}Usage:${CLR_RESET}"
+        echo ""
+        echo "  ${ICON_FILE}  coffe search <query>       Search files"
+        echo "  ${ICON_SEARCH}  coffe search-in <pattern>  Search file contents"
+        echo "  ${ICON_ENV}  coffe env <list|edit|create|load>"
+        echo "  ${ICON_GIT}  coffe git <checkout|log|diff|status>"
+        echo "  ${ICON_DOCKER}  coffe docker <ps|logs|stop>"
+        echo "  ${ICON_TOOLS}  coffe packages             Check/install system dependencies"
+        echo "  ${ICON_TAG}  coffe version              Show version info"
+        return 1
+    }
+    shift
+
+    case "$cmd" in
+        search)    coffe::search "$@" ;;
+        search_in) coffe::search_in "$@" ;;
+        env)       coffe::env "$@" ;;
+        git)       coffe::git "$@" ;;
+        docker)    coffe::docker "$@" ;;
+        packages)  coffe::packages::install "$@" ;;
+        version)   version ;;
+        *)
+            echo "${ICON_CLOSE} ${CLR_ORANGE}Unknown command:${CLR_RESET} ${CLR_BOLD}$cmd${CLR_RESET}" >&2
+            echo "  ${ICON_SEARCH} Try: ${CLR_DIM}coffe <search|search-in|env|git|docker|packages|version>${CLR_RESET}" >&2
+            return 1
+            ;;
+    esac
+}
