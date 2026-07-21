@@ -55,6 +55,14 @@ version() {
 # Auto-install dependencies
 coffe::packages::install
 
+# Config Bat
+BAT_THEMES_DIR="$HOME/.coffe-sdk/config/bat/themes"
+
+if [ ! -d "$BAT_THEMES_DIR" ]; then
+    echo "Bat themes directory not found. Creating..."
+    mkdir -p "$BAT_THEMES_DIR"
+fi
+
 # Debug
 if [[ "$DEBUG" == "true" ]]; then
     echo "${CLR_BLUE}${COFFE_SDK_ICON} ${CLR_BOLD}Coffee SDK${CLR_RESET} ${CLR_DIM}loaded${CLR_RESET}"
