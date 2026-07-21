@@ -1,0 +1,9 @@
+{
+  "name": "Coffee SDK",
+  "version": "1.0.0",
+  "createdBy": "Quitto",
+
+  "config": {
+    "debug": false
+  }
+}
