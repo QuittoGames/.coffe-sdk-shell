@@ -101,37 +101,48 @@ _FZF_BINDS=(
 # --------------------------------------
 
 coffe::keybinds() {
-    echo -e "${CLR_BOLD}${CLR_BLUE}${COFFE_SDK_ICON}  Coffee SDK — Keybinds${CLR_RESET}"
-    echo -e "${CLR_DIM}────────────────────────────────────────────${CLR_RESET}"
-    echo ""
-    echo -e "  ${CLR_BOLD}${CLR_CARAMEL}Navigation${CLR_RESET}"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-j / alt-j${CLR_RESET}    Down"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-k / alt-k${CLR_RESET}    Up"
-    echo -e "    ${CLR_SKY_BLUE}home${CLR_RESET}              First item"
-    echo -e "    ${CLR_SKY_BLUE}end${CLR_RESET}               Last item"
-    echo ""
-    echo -e "  ${CLR_BOLD}${CLR_CARAMEL}Preview${CLR_RESET}"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-u${CLR_RESET}            Preview half-page up"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-d${CLR_RESET}            Preview half-page down"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-b${CLR_RESET}            Preview page up"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-f${CLR_RESET}            Preview page down"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-r / ?${CLR_RESET}        Toggle preview"
-    echo ""
-    echo -e "  ${CLR_BOLD}${CLR_CARAMEL}Selection${CLR_RESET}"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-space${CLR_RESET}        Toggle selection"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-a${CLR_RESET}            Select all"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-x${CLR_RESET}            Deselect all"
-    echo ""
-    echo -e "  ${CLR_BOLD}${CLR_CARAMEL}Actions${CLR_RESET}"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-y${CLR_RESET}            Copy to clipboard"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-o / ctrl-e${CLR_RESET}   Open in VS Code"
-    echo -e "    ${CLR_SKY_BLUE}ctrl-p${CLR_RESET}            This help"
-    echo ""
-    echo -e "  ${CLR_DIM}────────────────────────────────────────────${CLR_RESET}"
-    echo -e "  ${CLR_DIM}Press ENTER or ESC to return${CLR_RESET}"
-    echo -ne "\n  ${ICON_KEYBOARD}  ${CLR_DIM}Press any key...${CLR_RESET}"
-    read -r -n 1
+    local keybinds_text="
+${CLR_BOLD}${CLR_CARAMEL}Navigation${CLR_RESET}
+  ${CLR_SKY_BLUE}ctrl-j / alt-j${CLR_RESET}    Down
+  ${CLR_SKY_BLUE}ctrl-k / alt-k${CLR_RESET}    Up
+  ${CLR_SKY_BLUE}home${CLR_RESET}              First item
+  ${CLR_SKY_BLUE}end${CLR_RESET}               Last item
+
+${CLR_BOLD}${CLR_CARAMEL}Preview${CLR_RESET}
+  ${CLR_SKY_BLUE}ctrl-u${CLR_RESET}            Preview half-page up
+  ${CLR_SKY_BLUE}ctrl-d${CLR_RESET}            Preview half-page down
+  ${CLR_SKY_BLUE}ctrl-b${CLR_RESET}            Preview page up
+  ${CLR_SKY_BLUE}ctrl-f${CLR_RESET}            Preview page down
+  ${CLR_SKY_BLUE}ctrl-r / ?${CLR_RESET}        Toggle preview
+
+${CLR_BOLD}${CLR_CARAMEL}Selection${CLR_RESET}
+  ${CLR_SKY_BLUE}ctrl-space${CLR_RESET}        Toggle selection
+  ${CLR_SKY_BLUE}ctrl-a${CLR_RESET}            Select all
+  ${CLR_SKY_BLUE}ctrl-x${CLR_RESET}            Deselect all
+
+${CLR_BOLD}${CLR_CARAMEL}Actions${CLR_RESET}
+  ${CLR_SKY_BLUE}ctrl-y${CLR_RESET}            Copy to clipboard
+  ${CLR_SKY_BLUE}ctrl-o / ctrl-e${CLR_RESET}   Open in VS Code
+  ${CLR_SKY_BLUE}ctrl-p${CLR_RESET}            This help
+"
+
+    # Se estiver rodando dentro do tmux, abre em um popup flutuante
+    if [[ -n "$TMUX" ]]; then
+        tmux display-popup -E -w 60% -h 65% -b rounded -T " Coffee SDK — Keybinds " \
+            "$SHELL -c 'echo -e \"$keybinds_text\" | fzf --ansi --no-input --no-info --header=\"Pressione ESC ou ENTER para fechar\" --color=bg:-1 >/dev/null'"
+    else
+        # Fallback fora do tmux: fzf secundário ou lesse/cat simples
+        echo -e "$keybinds_text" | fzf \
+            --ansi \
+            --height=60% \
+            --border=rounded \
+            --border-label=" Coffee SDK — Keybinds " \
+            --header="Pressione ESC ou ENTER para fechar" \
+            --no-input \
+            --no-info >/dev/null
+    fi
 }
+export -f coffe::keybinds
 
 # --------------------------------------
 # Presets (usados por fzf::*)
@@ -201,7 +212,7 @@ export FZF_ALT_C_OPTS="
 # bat
 # --------------------------------------
 
-export BAT_THEME="Visual Studio Dark (C/C++)"
+export BAT_THEME="cpptools_dark_vs"
 
 # --------------------------------------
 # Debug

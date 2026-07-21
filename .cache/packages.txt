@@ -13,3 +13,4 @@ eza
 jq
 wl-clipboard
 oh-my-bash
+tmux
