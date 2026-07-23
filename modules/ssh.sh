@@ -32,9 +32,9 @@ coffe::ssh() {
 }
 
 ssh_init_service() {
-    local template="$COFFE_SDK_ROOT/templates/systemd/ssh-agent.service"
+    local template="$COFFE_SDK_ROOT/templates/systemd/ssh_manager.service"
     local service_dir="$HOME/.config/systemd/user"
-    local service_file="$service_dir/ssh-agent.service"
+    local service_file="$service_dir/ssh_manager.service"
 
     if [[ ! -f "$template" ]]; then
         echo -e "${CLR_RED}${ICON_CLOSE}${CLR_RESET} ${CLR_BOLD}Erro:${CLR_RESET} Template não encontrado"
@@ -47,7 +47,7 @@ ssh_init_service() {
     mkdir -p "$service_dir"
 
     if [[ ! -f "$service_file" ]]; then
-        echo -e "${CLR_ORANGE}${ICON_TOOLS}${CLR_RESET} Instalando ssh-agent.service..."
+        echo -e "${CLR_ORANGE}${ICON_TOOLS}${CLR_RESET} Instalando ssh_manager.service..."
 
         cp "$template" "$service_file"
         chmod 644 "$service_file"
