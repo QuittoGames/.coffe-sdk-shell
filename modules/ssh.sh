@@ -17,18 +17,53 @@ coffe::ssh() {
     [[ -z "$cmd" ]] && {
         echo -e "${CLR_BLUE}${ICON_KEY}${CLR_RESET} ${CLR_BOLD}SSH${CLR_RESET} ${CLR_DIM}— commands${CLR_RESET}"
         echo
-        echo -e "  ${ICON_COG}  coffe ssh init_service    Install & start SSH agent"
+        echo -e "  ${ICON_COG}  coffe ssh init_service    Install, start agent & add keys"
+        echo -e "  ${ICON_KEY}  coffe ssh add_key         Add SSH keys to agent"
         return 1
     }
     shift
 
     case "$cmd" in
         init_service) ssh_init_service "$@" ;;
+        add_key)     ssh_add_key "$@" ;;
         *)
             echo -e "${ICON_CLOSE} ${CLR_ORANGE}Unknown ssh command:${CLR_RESET} ${CLR_BOLD}$cmd${CLR_RESET}" >&2
             return 1
             ;;
     esac
+}
+
+ssh_add_key() {
+    local ssh_dir="$HOME/.ssh"
+    local keys=()
+
+    [[ -d "$ssh_dir" ]] || {
+        echo -e "${CLR_RED}${ICON_CLOSE}${CLR_RESET} ${CLR_BOLD}Erro:${CLR_RESET} $ssh_dir não encontrado"
+        return 1
+    }
+
+    for key in "$ssh_dir"/id_{ed25519,ecdsa,rsa,dsa} "$ssh_dir"/id_ecdsa_sk "$ssh_dir"/id_ed25519_sk; do
+        [[ -f "$key" ]] && keys+=("$key")
+    done
+
+    if [[ ${#keys[@]} -eq 0 ]]; then
+        echo -e "${CLR_ORANGE}${ICON_WARNING}${CLR_RESET} Nenhuma chave privada encontrada em $ssh_dir"
+        return 1
+    fi
+
+    echo -e "${CLR_BLUE}${ICON_KEY}${CLR_RESET} Adicionando chaves ao agent..."
+
+    for key in "${keys[@]}"; do
+        local name
+        name=$(basename "$key")
+        if ssh-add -q "$key" 2>/dev/null; then
+            echo -e "  ${CLR_SUCCESS}${ICON_CHECK}${CLR_RESET} $name"
+        else
+            echo -e "  ${CLR_RED}${ICON_CLOSE}${CLR_RESET} $name — ${CLR_DIM}falha ao adicionar${CLR_RESET}"
+        fi
+    done
+
+    echo -e "${CLR_DIM}─────────────────────────────────────${CLR_RESET}"
 }
 
 ssh_init_service() {
@@ -67,4 +102,6 @@ ssh_init_service() {
     echo -e "${CLR_SUCCESS}${ICON_CHECK}${CLR_RESET} SSH Agent iniciado!"
     echo -e "  ${CLR_BLUE}${ICON_KEY}${CLR_RESET} Socket: ${CLR_CREAM}$SSH_AUTH_SOCK${CLR_RESET}"
     echo -e "${CLR_DIM}─────────────────────────────────────${CLR_RESET}"
+
+    ssh_add_key
 }
