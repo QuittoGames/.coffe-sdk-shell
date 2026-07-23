@@ -19,6 +19,7 @@ source "$COFFE_SDK_ROOT/modules/search.sh"
 source "$COFFE_SDK_ROOT/modules/env.sh"
 source "$COFFE_SDK_ROOT/modules/git.sh"
 source "$COFFE_SDK_ROOT/modules/docker.sh"
+source "$COFFE_SDK_ROOT/modules/ssh.sh"
 
 export DEBUG=$(jq -r '.config.debug' "$COFFE_SDK_ROOT/data/info.json")
 
@@ -75,7 +76,7 @@ fi
 # ======================================
 # CLI dispatcher
 # ======================================
-# Uso: coffe <search|search-in|env|git|docker|packages> [args...]
+# Uso: coffe <search|search-in|env|git|docker|ssh|packages> [args...]
 
 coffe() {
     local cmd="${1:-}"
@@ -89,6 +90,7 @@ coffe() {
         echo "  ${ICON_ENV}  coffe env <list|edit|create|load>"
         echo "  ${ICON_GIT}  coffe git <checkout|log|diff|status>"
         echo "  ${ICON_DOCKER}  coffe docker <ps|logs|stop>"
+        echo "  ${ICON_KEY}  coffe ssh <init_service>       Manage SSH agent"
         echo "  ${ICON_TOOLS}  coffe packages             Check/install system dependencies"
         echo "  ${ICON_TAG}  coffe version              Show version info"
         return 1
@@ -101,6 +103,7 @@ coffe() {
         env)       coffe::env "$@" ;;
         git)       coffe::git "$@" ;;
         docker)    coffe::docker "$@" ;;
+        ssh)       coffe::ssh "$@" ;;
         packages)  coffe::packages::install "$@" ;;
         version)   version ;;
         *)
