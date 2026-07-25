@@ -3,7 +3,7 @@
 # Coffee SDK — Entry Point
 # ======================================
 
-COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}"
+COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}"
 
 # Config
 source "$COFFE_SDK_ROOT/config/packages.sh"
@@ -57,7 +57,7 @@ version() {
 coffe::packages::install
 
 # Config Bat
-BAT_THEMES_DIR="$HOME/.coffe-sdk/config/bat/themes"
+BAT_THEMES_DIR="$COFFE_SDK_ROOT/config/bat/themes"
 
 if [ ! -d "$BAT_THEMES_DIR" ]; then
     echo "Bat themes directory not found. Creating..."
@@ -87,7 +87,7 @@ coffe() {
         echo ""
         echo "  ${ICON_FILE}  coffe search <query>       Search files"
         echo "  ${ICON_SEARCH}  coffe search-in <pattern>  Search file contents"
-        echo "  ${ICON_ENV}  coffe env <list|edit|create|load>"
+        echo "  ${ICON_ENV}  coffe env <list|init|edit|load|add>"
         echo "  ${ICON_GIT}  coffe git <checkout|log|diff|status>"
         echo "  ${ICON_DOCKER}  coffe docker <ps|logs|stop>"
         echo "  ${ICON_KEY}  coffe ssh <init_service>       Manage SSH agent"

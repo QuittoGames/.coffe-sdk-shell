@@ -53,7 +53,7 @@ coffe::env::edit() {
     code "$file"
 }
 
-coffe::env::create() {
+coffe::env::init() {
     declare -A folders=(
         ["services"]="GitHub Discord Outlook"
         ["ai"]="OpenAI Anthropic OpenRouter"
@@ -98,6 +98,25 @@ EOF
 coffe::env::load() {
     local name="$1"
 
+    if [[ -z "$name" ]]; then
+        local files
+        files=$(find "$ENV_ROOT" -type f -name "*.env")
+
+        if [[ -z "$files" ]]; then
+            echo "${ICON_BAN} No .env files found in $ENV_ROOT"
+            return 1
+        fi
+
+        local count=0
+        while IFS= read -r file; do
+            source "$file"
+            ((count++))
+        done <<< "$files"
+
+        echo "${ICON_CHECK} $count .env files loaded from $ENV_ROOT"
+        return
+    fi
+
     local file
     file=$(find "$ENV_ROOT" -name "$name.env" | head -n1)
 
@@ -123,7 +142,7 @@ coffe::env::add() {
     files=$(find "$env_root" -type f -name "*.env" | sed "s|$env_root/||" | sort)
 
     if [[ -z "$files" ]]; then
-        echo -e "  ${ICON_BAN} ${CLR_RED}No .env files found. Run ${CLR_BOLD}env create${CLR_RESET}${CLR_RED} first.${CLR_RESET}"
+        echo -e "  ${ICON_BAN} ${CLR_RED}No .env files found. Run ${CLR_BOLD}env init${CLR_RESET}${CLR_RED} first.${CLR_RESET}"
         return 1
     fi
 
@@ -212,7 +231,7 @@ coffe::env::add() {
 coffe::env() {
     case "${1:-}" in
         list)   coffe::env::list ;;
-        create) coffe::env::create ;;
+        init)   coffe::env::init ;;
         edit)   shift; coffe::env::edit "$@" ;;
         load)   shift; coffe::env::load "$@" ;;
         add)    coffe::env::add ;;
@@ -223,9 +242,9 @@ coffe::env() {
                     Usage:
 
                     env list
-                    env create
+                    env init
                     env edit <name>
-                    env load <name>
+                    env load [name]
                     env add
                 "
             ;;

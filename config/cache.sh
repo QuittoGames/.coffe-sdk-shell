@@ -3,11 +3,11 @@
 #
 # cache.sh — Cache de estado para evitar re-check em cada sessão.
 #
-# Armazena em ~/.coffe-sdk/.cache/ quais pacotes já foram verificados
+# Armazena em ~/.coffe-sdk-shell/.cache/ quais pacotes já foram verificados
 # como instalados, para que rpm -q não seja chamado repetidamente
 # entre sessões do terminal.
 
-CACHE_DIR="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}/.cache"
+CACHE_DIR="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}/.cache"
 CACHE_FILE="$CACHE_DIR/packages.txt"
 
 coffe::cache::init() {
