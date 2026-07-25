@@ -12,9 +12,9 @@
 #
 # Usa cache para não rodar rpm -q repetidamente entre sessões.
 
-COFFEE_DEPENDENCIES="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}/data/dependencies.conf"
+COFFEE_DEPENDENCIES="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}/data/dependencies.conf"
 
-source "${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}/config/cache.sh"
+source "${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}/config/cache.sh"
 
 # --------------------------------------
 # Load

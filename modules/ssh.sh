@@ -5,7 +5,7 @@
 #
 # Depende de: ui/theme/coffe_theme.sh (cores + ícones)
 
-COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}"
+COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}"
 
 # Garante cores e ícones carregados (source seguro caso já tenha sido carregado)
 if [[ -z "$CLR_RESET" ]]; then

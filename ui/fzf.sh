@@ -7,7 +7,7 @@
 # Arrays de tema estão em theme/coffe_theme.sh.
 # Use as funções `fzf::*` para abrir o seletor.
 
-COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}"
+COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}"
 source "$COFFE_SDK_ROOT/ui/theme/coffe_theme.sh"
 
 # --------------------------------------

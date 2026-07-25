@@ -5,7 +5,7 @@
 # Nada aqui é exportado como string plana (sem FZF_DEFAULT_OPTS).
 # Use `fzf::run` em fzf.sh para aplicar os arrays corretamente.
 
-COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk}"
+COFFE_SDK_ROOT="${COFFE_SDK_ROOT:-$HOME/.coffe-sdk-shell}"
 
 source "$COFFE_SDK_ROOT/ui/icons.sh"
 source "$COFFE_SDK_ROOT/ui/colors/ansi_colors.sh"
