@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+BATS="$REPO_DIR/node_modules/.bin/bats"
+
+if [[ ! -x "$BATS" ]]; then
+  echo "bats not found. Run: npm install" >&2
+  exit 1
+fi
+
+cd "$REPO_DIR"
+
+"$BATS" tests/*.bats "$@"

@@ -19,6 +19,7 @@
 COFFE_SDK_ICON=""               # nf-custom-c — xícara de café
 
 ICON_LINUX=$'\uf17c'             # nf-fa-linux — Tux/pinguim
+ICON_WINDOWS=$'\uf17a'           # nf-fa-windows — Windows logo
 ICON_FEDORA=$'\uf30a'            # nf-linux-fedora — logo Fedora
 ICON_BASH=$'\ue795'              # nf-dev-terminal — shell/bash
 ICON_PYTHON=$'\ue73c'            # nf-dev-python — Python
@@ -196,6 +197,22 @@ ICON_CONFIG=$'\uf013'          # nf-fa-cog — config
 ICON_TERMINAL_ALT=$'\uf120'    # nf-fa-terminal
 ICON_WINDOW=$'\uf2d0'          # nf-fa-window-maximize — janela
 
+# Pool de ícones de café (variados para mensagens de sucesso)
+COFFEE_POOL=(
+    $'\ue815'   # nf-custom-c            — xícara clássica
+    $'\uf0f4'   # nf-fa-coffee           — café FA
+    $'\U000F0EF4' # nf-mdi-coffee     󰻴  — café MDI
+    $'\U000F0EF5' # nf-mdi-tea        󰻵  — chá
+    $'\U000F0EF6' # nf-mdi-mug        󰻶  — caneca
+    $'\U000F0EF7' # nf-mdi-glass-mug  󰻷  — caneca de vidro
+)
+
+# Env / secrets specific
+ICON_ENV_VAR=$'\uf084'         # nf-fa-key — variável de ambiente (key=value)
+ICON_LINE_NUM=$'\uf0cb'        # nf-fa-list-ol — número de linha
+ICON_FILE_CODE=$'\uf1c9'       # nf-fa-file-code-o — arquivo .env/código
+ICON_RESULT=$'\uf15b'          # nf-fa-file — resultado de busca
+
 # Identity shorthands (usados nos módulos)
 ICON_COFFE=$'\ue815'           # nf-custom-c — xícara (alias)
 ICON_PENGUIN=$'\uf17c'         # nf-fa-linux — Linux/Tux
@@ -204,6 +221,12 @@ ICON_SHELL=$'\ue795'           # nf-dev-terminal — shell script
 # ======================================
 # Debug helper
 # ======================================
+
+# Retorna um ícone de café aleatório do pool
+coffe::coffee_icon() {
+    local idx=$(( RANDOM % ${#COFFEE_POOL[@]} ))
+    echo -n "${COFFEE_POOL[$idx]}"
+}
 
 icons::list() {
     echo "=== Coffee SDK Icons ==="

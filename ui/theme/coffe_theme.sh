@@ -92,7 +92,7 @@ _FZF_BINDS=(
     --bind='ctrl-y:execute-silent(echo -n {} | wl-copy)+abort'
     --bind='ctrl-o:execute(code {})+abort'
     --bind='ctrl-e:execute(code {})+abort'
-    --bind=?:toggle-preview
+    --bind='?:toggle-preview'
     --bind='ctrl-p:execute($SHELL -c "source ${COFFE_SDK_ROOT}/ui/theme/coffe_theme.sh && coffe::keybinds")'
 )
 

@@ -37,7 +37,6 @@ version() {
     )
 
     local icon_app="${COFFE_SDK_ICON:-☕}"
-    local icon_os="${ICON_LINUX:-}"
     local icon_distro="${ICON_FEDORA:-}"
     local icon_shell="${ICON_BASH:-}"
     local icon_version="${ICON_TAG:-🏷️}"
@@ -48,7 +47,7 @@ version() {
     echo -e "  ${CLR_DIM}${ICON_COFFE}${CLR_RESET}${CLR_DIM}────────────────────────────────────${CLR_RESET}"
     echo -e "   ${CLR_GREEN}${icon_version}${CLR_RESET}  ${CLR_BOLD}Versão:${CLR_RESET}  ${CLR_CARAMEL}v${version}${CLR_RESET}"
     echo -e "   ${CLR_SKY_BLUE}${icon_author}${CLR_RESET}  ${CLR_BOLD}Autor:${CLR_RESET}   ${CLR_CREAM}${author:-Quitto}${CLR_RESET}"
-    echo -e "   ${icon_os} ${CLR_DIM}Linux${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${icon_distro} ${CLR_DIM}Fedora${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${icon_shell} ${CLR_DIM}Bash${CLR_RESET}"
+    echo -e "   ${LOGO_OS}  ${CLR_BROWN}│${CLR_RESET}  ${icon_distro} ${CLR_DIM}Fedora${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${icon_shell} ${CLR_DIM}Bash${CLR_RESET}"
     echo -e "  ${CLR_DIM}${ICON_COFFE}────────────────────────────────────${CLR_RESET}"
         echo -e ""
 }
@@ -70,8 +69,61 @@ if [[ "$DEBUG" == "true" ]]; then
     echo "  ${ICON_SHELL}  ${CLR_DIM}Shell:${CLR_RESET}  search env git docker"
     echo "  ${ICON_PYTHON}  ${CLR_DIM}Python:${CLR_RESET} SDK (future)"
     echo "  ${ICON_CPP}  ${CLR_DIM}C/C++:${CLR_RESET}  SDK (future)"
-    echo "  ${ICON_LINUX} ${CLR_DIM}Linux${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${ICON_FEDORA} ${CLR_DIM}Fedora${CLR_RESET}"
+    echo "  ${LOGO_OS_COLOR}${LOGO_OS_SHORT}${CLR_RESET} ${CLR_DIM}OS${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${ICON_FEDORA} ${CLR_DIM}Fedora${CLR_RESET}"
 fi
+
+# ======================================
+# OS Detection
+# ======================================
+
+# Detecta o sistema operacional e seta LOGO_OS
+coffe::detect_os() {
+    local os
+    os=$(uname -s)
+
+    case "$os" in
+        Linux)
+            if grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null || grep -qi microsoft /proc/version 2>/dev/null; then
+                LOGO_OS="${ICON_WINDOWS}  WSL"
+                LOGO_OS_SHORT="${ICON_WINDOWS}"
+                LOGO_OS_COLOR="${CLR_ORANGE}"
+            else
+                LOGO_OS="${CLR_GREEN}${ICON_LINUX}${CLR_RESET}  ${CLR_GREEN}Linux${CLR_RESET}"
+                LOGO_OS_SHORT="${ICON_LINUX}"
+                LOGO_OS_COLOR="${CLR_GREEN}"
+            fi
+            ;;
+        Darwin)
+            LOGO_OS="$'\uf179'  macOS"
+            LOGO_OS_SHORT="$'\uf179'"
+            LOGO_OS_COLOR="${CLR_DIM}"
+            ;;
+        MINGW*|MSYS*|CYGWIN*)
+            LOGO_OS="${ICON_WINDOWS}  Windows"
+            LOGO_OS_SHORT="${ICON_WINDOWS}"
+            LOGO_OS_COLOR="${CLR_BLUE}"
+            ;;
+        *)
+            LOGO_OS="${CLR_GREEN}${ICON_LINUX}${CLR_RESET}  ${CLR_GREEN}Linux${CLR_RESET}"
+            LOGO_OS_SHORT="${ICON_LINUX}"
+            LOGO_OS_COLOR="${CLR_GREEN}"
+            ;;
+    esac
+
+    export LOGO_OS LOGO_OS_SHORT LOGO_OS_COLOR
+}
+
+# Roda detecção na inicialização
+coffe::detect_os
+
+# ======================================
+# Utilitários globais
+# ======================================
+
+# Limpa o terminal e posiciona no topo
+coffe::clear() {
+    clear
+}
 
 # ======================================
 # CLI dispatcher
@@ -81,18 +133,18 @@ fi
 coffe() {
     local cmd="${1:-}"
     [[ -z "$cmd" ]] && {
-        echo "${COFFE_SDK_ICON}  ${CLR_BOLD}${CLR_BLUE}Coffee SDK${CLR_RESET}  ${CLR_DIM}— CLI${CLR_RESET}"
         echo ""
-        echo "  ${CLR_DIM}Usage:${CLR_RESET}"
+        echo "  ${CLR_DIM}──${CLR_RESET} ${CLR_BLUE}${COFFE_SDK_ICON}${CLR_RESET} ${CLR_LIGHT_BLUE}coffee${CLR_RESET} ${CLR_DIM}  ${CLR_RESET}${LOGO_OS_COLOR}${LOGO_OS_SHORT}${CLR_RESET}${CLR_DIM}  ─────────────────────────────────${CLR_RESET}"
         echo ""
-        echo "  ${ICON_FILE}  coffe search <query>       Search files"
-        echo "  ${ICON_SEARCH}  coffe search-in <pattern>  Search file contents"
-        echo "  ${ICON_ENV}  coffe env <list|init|edit|load|add>"
-        echo "  ${ICON_GIT}  coffe git <checkout|log|diff|status>"
-        echo "  ${ICON_DOCKER}  coffe docker <ps|logs|stop>"
-        echo "  ${ICON_KEY}  coffe ssh <init_service>       Manage SSH agent"
-        echo "  ${ICON_TOOLS}  coffe packages             Check/install system dependencies"
-        echo "  ${ICON_TAG}  coffe version              Show version info"
+        echo "  ${CLR_CARAMEL}search <query>      ${CLR_RESET} ${CLR_DIM}search files${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}search-in <pattern> ${CLR_RESET} ${CLR_DIM}search file contents${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}env                 ${CLR_RESET} ${CLR_DIM}environment variable manager${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}git                 ${CLR_RESET} ${CLR_DIM}git workflow helpers${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}docker              ${CLR_RESET} ${CLR_DIM}docker container tools${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}ssh                 ${CLR_RESET} ${CLR_DIM}ssh agent manager${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}packages            ${CLR_RESET} ${CLR_DIM}check/install system dependencies${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}version             ${CLR_RESET} ${CLR_DIM}show version info${CLR_RESET}"
+        echo ""
         return 1
     }
     shift

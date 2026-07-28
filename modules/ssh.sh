@@ -15,10 +15,12 @@ fi
 coffe::ssh() {
     local cmd="${1:-}"
     [[ -z "$cmd" ]] && {
-        echo -e "${CLR_BLUE}${ICON_KEY}${CLR_RESET} ${CLR_BOLD}SSH${CLR_RESET} ${CLR_DIM}— commands${CLR_RESET}"
-        echo
-        echo -e "  ${ICON_COG}  coffe ssh init_service    Install, start agent & add keys"
-        echo -e "  ${ICON_KEY}  coffe ssh add_key         Add SSH keys to agent"
+        echo ""
+        echo -e "  ${CLR_DIM}──${CLR_RESET} ${CLR_BLUE}${COFFE_SDK_ICON}${CLR_RESET} ${CLR_LIGHT_BLUE}ssh${CLR_RESET} ${CLR_DIM}────────────────────────────────────${CLR_RESET}"
+        echo ""
+        echo -e "  ${CLR_CARAMEL}init_service    ${CLR_RESET} ${CLR_DIM}install, start agent & add keys${CLR_RESET}"
+        echo -e "  ${CLR_CARAMEL}add_key         ${CLR_RESET} ${CLR_DIM}add SSH keys to agent${CLR_RESET}"
+        echo ""
         return 1
     }
     shift

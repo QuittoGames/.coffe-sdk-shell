@@ -85,14 +85,14 @@ EOF
 
                 echo "  ${ICON_FILE} Created: $path"
             else
-                echo "  ${ICON_CHECK} Already exists: $path"
+                echo "  $(coffe::coffee_icon)  ${CLR_DIM}Already exists:${CLR_RESET} $path"
             fi
         done
     done
 
     echo ""
-    echo "${ICON_CHECK} Secrets structure ready!"
-    echo "${ICON_LOCATION} Location: $ENV_ROOT"
+    echo "$(coffe::coffee_icon)  ${CLR_BOLD}Secrets structure ready!${CLR_RESET}"
+    echo "  ${CLR_DIM}${ICON_LOCATION} Location:${CLR_RESET} $ENV_ROOT"
 }
 
 coffe::env::load() {
@@ -113,7 +113,7 @@ coffe::env::load() {
             ((count++))
         done <<< "$files"
 
-        echo "${ICON_CHECK} $count .env files loaded from $ENV_ROOT"
+        echo "$(coffe::coffee_icon)  ${CLR_DIM}$count .env files loaded from${CLR_RESET} $ENV_ROOT"
         return
     fi
 
@@ -127,7 +127,7 @@ coffe::env::load() {
 
     source "$file"
 
-    echo "${ICON_CHECK} $name loaded"
+    echo "$(coffe::coffee_icon)  ${CLR_DIM}$name loaded${CLR_RESET}"
 }
 
 coffe::env::add() {
@@ -224,8 +224,94 @@ coffe::env::add() {
 
     chmod 600 "$full_path"
 
-    echo -e "  ${ICON_CHECK} ${CLR_GREEN}Key ${CLR_BOLD}${key}${CLR_RESET}${CLR_GREEN} added to ${CLR_BOLD}$file${CLR_RESET}"
+    echo -e "  $(coffe::coffee_icon) ${CLR_GREEN}Key ${CLR_BOLD}${key}${CLR_RESET}${CLR_GREEN} added to ${CLR_BOLD}$file${CLR_RESET}"
     echo -e "  ${ICON_SHIELD} ${CLR_DIM}File permissions set to 600${CLR_RESET}"
+}
+
+coffe::env::find() {
+    local key="$1"
+
+    echo ""
+    echo "  ${CLR_BLUE}${COFFE_SDK_ICON}${CLR_RESET}  ${CLR_LIGHT_BLUE}env${CLR_RESET} ${CLR_DIM}·${CLR_RESET} ${CLR_LIGHT_BLUE}search${CLR_RESET}"
+
+    if [[ -z "$key" ]]; then
+        echo ""
+        echo "  ${CLR_DIM}${ICON_BAN}${CLR_RESET}  ${CLR_RED}specify a key to search${CLR_RESET}"
+        echo ""
+        return 1
+    fi
+
+    if ! command -v rg &>/dev/null; then
+        echo ""
+        echo "  ${CLR_DIM}${ICON_BAN}${CLR_RESET}  ${CLR_RED}rg (ripgrep) not found${CLR_RESET}"
+        echo "  ${CLR_DIM}${ICON_TOOLS}${CLR_RESET}  ${CLR_CARAMEL}sudo dnf install ripgrep${CLR_RESET}"
+        echo ""
+        return 1
+    fi
+
+    local search_dirs=()
+    if [[ -d "$ENV_ROOT" ]]; then
+        search_dirs+=("$ENV_ROOT")
+    fi
+    if [[ -f ".env" ]]; then
+        search_dirs+=(".")
+    fi
+
+    if [[ ${#search_dirs[@]} -eq 0 ]]; then
+        echo ""
+        echo "  ${CLR_DIM}${ICON_BAN}${CLR_RESET}  ${CLR_RED}no .env sources found${CLR_RESET}"
+        echo "  ${CLR_DIM}       ${ENV_ROOT} missing and no local .env${CLR_RESET}"
+        echo ""
+        return 1
+    fi
+
+    local all_results=""
+    local dir
+    for dir in "${search_dirs[@]}"; do
+        local results
+        results=$(rg -in "^[^=]*${key}[^=]*=" "$dir" --glob "*.env" 2>&1)
+        if [[ -n "$results" ]]; then
+            all_results="$all_results"$'\n'"$results"
+        fi
+    done
+
+    all_results=$(echo "$all_results" | sed '/^$/d')
+
+    local count
+    count=$(echo "$all_results" | wc -l)
+    local plural=""
+    (( count > 1 )) && plural="s"
+    local match_label="${count} match${plural}"
+
+    if [[ -z "$all_results" || "$count" -eq 0 ]]; then
+        echo ""
+        echo "  ${CLR_DIM}${ICON_SEARCH}${CLR_RESET}  ${CLR_CARAMEL}${CLR_BOLD}\"${key}\"${CLR_RESET}  ${CLR_DIM}·${CLR_RESET}  ${CLR_RED}✗${CLR_RESET}  ${CLR_DIM}no matches${CLR_RESET}"
+        echo ""
+        return 1
+    fi
+
+    echo ""
+    echo "  ${CLR_DIM}${ICON_SEARCH}${CLR_RESET}  ${CLR_CARAMEL}${CLR_BOLD}\"${key}\"${CLR_RESET}  ${CLR_DIM}·${CLR_RESET}  ${CLR_LIGHT_BLUE}${match_label}${CLR_RESET}"
+    echo ""
+
+    echo "$all_results" | while IFS= read -r line; do
+        local file="${line%%:*}"
+        local rest="${line#*:}"
+        local line_num="${rest%%:*}"
+        local content="${rest#*:}"
+
+        local display_path="$file"
+        if [[ "$file" == "$ENV_ROOT"* ]]; then
+            display_path="~${file#$HOME}"
+        fi
+
+        local key_name="${content%%=*}"
+        local value="${content#*=}"
+
+        echo "  ${CLR_BLUE}${COFFE_SDK_ICON}${CLR_RESET}  ${CLR_CARAMEL}${display_path}${CLR_RESET}  ${CLR_DIM} ${line_num}${CLR_RESET}"
+        echo "     ${CLR_SKY_BLUE}${key_name}${CLR_RESET}  ${CLR_DIM}=${CLR_RESET}  ${CLR_GREEN}${value}${CLR_RESET}"
+        echo ""
+    done
 }
 
 coffe::env() {
@@ -235,18 +321,20 @@ coffe::env() {
         edit)   shift; coffe::env::edit "$@" ;;
         load)   shift; coffe::env::load "$@" ;;
         add)    coffe::env::add ;;
+        find)   shift; coffe::env::find "$@" ;;
+        search) shift; coffe::env::find "$@" ;;
         *)
-            echo "
-                    ${ICON_MICROCHIP} ENV Manager
-
-                    Usage:
-
-                    env list
-                    env init
-                    env edit <name>
-                    env load [name]
-                    env add
-                "
+            echo ""
+            echo "  ${CLR_DIM}──${CLR_RESET} ${CLR_BLUE}${COFFE_SDK_ICON}${CLR_RESET} ${CLR_LIGHT_BLUE}env${CLR_RESET} ${CLR_DIM}────────────────────────────────────${CLR_RESET}"
+            echo ""
+            echo "  ${CLR_CARAMEL}list               ${CLR_RESET} ${CLR_DIM}list all .env files${CLR_RESET}"
+            echo "  ${CLR_CARAMEL}init               ${CLR_RESET} ${CLR_DIM}initialize secrets structure${CLR_RESET}"
+            echo "  ${CLR_CARAMEL}edit <name>        ${CLR_RESET} ${CLR_DIM}edit a .env file${CLR_RESET}"
+            echo "  ${CLR_CARAMEL}load [name]        ${CLR_RESET} ${CLR_DIM}load .env files into shell${CLR_RESET}"
+            echo "  ${CLR_CARAMEL}add                ${CLR_RESET} ${CLR_DIM}add a key to a .env${CLR_RESET}"
+            echo "  ${CLR_CARAMEL}find <key>         ${CLR_RESET} ${CLR_DIM}search for a key across .env files${CLR_RESET}"
+            echo "  ${CLR_CARAMEL}search <key>       ${CLR_RESET} ${CLR_DIM}alias for find${CLR_RESET}"
+            echo ""
             ;;
     esac
 }
