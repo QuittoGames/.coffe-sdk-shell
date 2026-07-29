@@ -15,11 +15,12 @@ source "$COFFE_SDK_ROOT/ui/fzf.sh"
 source "$COFFE_SDK_ROOT/ui/dialogs.sh"
 
 # Modules (usam apenas ui::*, nunca fzf diretamente)
-source "$COFFE_SDK_ROOT/modules/search.sh"
-source "$COFFE_SDK_ROOT/modules/env.sh"
-source "$COFFE_SDK_ROOT/modules/git.sh"
-source "$COFFE_SDK_ROOT/modules/docker.sh"
-source "$COFFE_SDK_ROOT/modules/ssh.sh"
+source "$COFFE_SDK_ROOT/modules/bash/search.sh"
+source "$COFFE_SDK_ROOT/modules/bash/env.sh"
+source "$COFFE_SDK_ROOT/modules/bash/git.sh"
+source "$COFFE_SDK_ROOT/modules/bash/docker.sh"
+source "$COFFE_SDK_ROOT/modules/bash/ssh.sh"
+source "$COFFE_SDK_ROOT/modules/bash/zsh.sh"
 
 export DEBUG=$(jq -r '.config.debug' "$COFFE_SDK_ROOT/data/info.json")
 
@@ -66,7 +67,7 @@ fi
 # Debug
 if [[ "$DEBUG" == "true" ]]; then
     echo "${CLR_BLUE}${COFFE_SDK_ICON} ${CLR_BOLD}Coffee SDK${CLR_RESET} ${CLR_DIM}loaded${CLR_RESET}"
-    echo "  ${ICON_SHELL}  ${CLR_DIM}Shell:${CLR_RESET}  search env git docker"
+    echo "  ${ICON_SHELL}  ${CLR_DIM}Shell:${CLR_RESET}  search env git docker ssh zsh"
     echo "  ${ICON_PYTHON}  ${CLR_DIM}Python:${CLR_RESET} SDK (future)"
     echo "  ${ICON_CPP}  ${CLR_DIM}C/C++:${CLR_RESET}  SDK (future)"
     echo "  ${LOGO_OS_COLOR}${LOGO_OS_SHORT}${CLR_RESET} ${CLR_DIM}OS${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${ICON_FEDORA} ${CLR_DIM}Fedora${CLR_RESET}"
@@ -142,6 +143,7 @@ coffe() {
         echo "  ${CLR_CARAMEL}git                 ${CLR_RESET} ${CLR_DIM}git workflow helpers${CLR_RESET}"
         echo "  ${CLR_CARAMEL}docker              ${CLR_RESET} ${CLR_DIM}docker container tools${CLR_RESET}"
         echo "  ${CLR_CARAMEL}ssh                 ${CLR_RESET} ${CLR_DIM}ssh agent manager${CLR_RESET}"
+        echo "  ${CLR_CARAMEL}zsh                 ${CLR_RESET} ${CLR_DIM}zsh plugin manager${CLR_RESET}"
         echo "  ${CLR_CARAMEL}packages            ${CLR_RESET} ${CLR_DIM}check/install system dependencies${CLR_RESET}"
         echo "  ${CLR_CARAMEL}version             ${CLR_RESET} ${CLR_DIM}show version info${CLR_RESET}"
         echo ""
@@ -156,11 +158,12 @@ coffe() {
         git)       coffe::git "$@" ;;
         docker)    coffe::docker "$@" ;;
         ssh)       coffe::ssh "$@" ;;
+        zsh)       coffe::zsh "$@" ;;
         packages)  coffe::packages::install "$@" ;;
         version)   version ;;
         *)
             echo "${ICON_CLOSE} ${CLR_ORANGE}Unknown command:${CLR_RESET} ${CLR_BOLD}$cmd${CLR_RESET}" >&2
-            echo "  ${ICON_SEARCH} Try: ${CLR_DIM}coffe <search|search-in|env|git|docker|packages|version>${CLR_RESET}" >&2
+            echo "  ${ICON_SEARCH} Try: ${CLR_DIM}coffe <search|search-in|env|git|docker|ssh|zsh|packages|version>${CLR_RESET}" >&2
             return 1
             ;;
     esac

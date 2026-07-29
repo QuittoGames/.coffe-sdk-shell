@@ -15,11 +15,12 @@ source "$COFFE_SDK_ROOT/ui/fzf.sh"
 source "$COFFE_SDK_ROOT/ui/dialogs.sh"
 
 # Modules (usam apenas ui::*, nunca fzf diretamente)
-source "$COFFE_SDK_ROOT/modules/search.sh"
-source "$COFFE_SDK_ROOT/modules/env.sh"
-source "$COFFE_SDK_ROOT/modules/git.sh"
-source "$COFFE_SDK_ROOT/modules/docker.sh"
-source "$COFFE_SDK_ROOT/modules/ssh.sh"
+source "$COFFE_SDK_ROOT/modules/zsh/search.zsh"
+source "$COFFE_SDK_ROOT/modules/zsh/env.zsh"
+source "$COFFE_SDK_ROOT/modules/zsh/git.zsh"
+source "$COFFE_SDK_ROOT/modules/zsh/docker.zsh"
+source "$COFFE_SDK_ROOT/modules/zsh/ssh.zsh"
+source "$COFFE_SDK_ROOT/modules/zsh/zsh.zsh"
 
 export DEBUG=$(jq -r '.config.debug' "$COFFE_SDK_ROOT/data/info.json")
 
@@ -76,7 +77,7 @@ fi
 # Debug
 if [[ "$DEBUG" == "true" ]]; then
     print -P "${CLR_BLUE}${COFFE_SDK_ICON} ${CLR_BOLD}Coffee SDK${CLR_RESET} ${CLR_DIM}loaded${CLR_RESET}"
-    print -P "  ${ICON_SHELL}  ${CLR_DIM}Shell:${CLR_RESET}  search env git docker"
+    print -P "  ${ICON_SHELL}  ${CLR_DIM}Shell:${CLR_RESET}  search env git docker ssh zsh"
     print -P "  ${ICON_PYTHON}  ${CLR_DIM}Python:${CLR_RESET} SDK (future)"
     print -P "  ${ICON_CPP}  ${CLR_DIM}C/C++:${CLR_RESET}  SDK (future)"
     print -P "  ${LOGO_OS_COLOR}${LOGO_OS_SHORT}${CLR_RESET} ${CLR_DIM}OS${CLR_RESET}  ${CLR_BROWN}│${CLR_RESET}  ${ICON_FEDORA} ${CLR_DIM}Fedora${CLR_RESET}"
@@ -148,6 +149,7 @@ coffe() {
         print -P "  ${CLR_CARAMEL}git                 ${CLR_RESET} ${CLR_DIM}git workflow helpers${CLR_RESET}"
         print -P "  ${CLR_CARAMEL}docker              ${CLR_RESET} ${CLR_DIM}docker container tools${CLR_RESET}"
         print -P "  ${CLR_CARAMEL}ssh                 ${CLR_RESET} ${CLR_DIM}ssh agent manager${CLR_RESET}"
+        print -P "  ${CLR_CARAMEL}zsh                 ${CLR_RESET} ${CLR_DIM}zsh plugin manager${CLR_RESET}"
         print -P "  ${CLR_CARAMEL}packages            ${CLR_RESET} ${CLR_DIM}check/install system dependencies${CLR_RESET}"
         print -P "  ${CLR_CARAMEL}version             ${CLR_RESET} ${CLR_DIM}show version info${CLR_RESET}"
         print ""
@@ -162,11 +164,12 @@ coffe() {
         git)       coffe::git "$@" ;;
         docker)    coffe::docker "$@" ;;
         ssh)       coffe::ssh "$@" ;;
+        zsh)       coffe::zsh "$@" ;;
         packages)  coffe::packages::install "$@" ;;
         version)   version ;;
         *)
             print -P "${ICON_CLOSE} ${CLR_ORANGE}Unknown command:${CLR_RESET} ${CLR_BOLD}$cmd${CLR_RESET}" >&2
-            print -P "  ${ICON_SEARCH} Try: ${CLR_DIM}coffe <search|search-in|env|git|docker|packages|version>${CLR_RESET}" >&2
+            print -P "  ${ICON_SEARCH} Try: ${CLR_DIM}coffe <search|search-in|env|git|docker|ssh|zsh|packages|version>${CLR_RESET}" >&2
             return 1
             ;;
     esac

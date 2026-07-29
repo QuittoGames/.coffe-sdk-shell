@@ -159,6 +159,7 @@ ICON_CHEVRON_RIGHT=$'\uf054'   # nf-fa-chevron-right
 
 ICON_BAN=$'\uf05e'             # nf-fa-ban (no entry)
 ICON_TIMES=$'\uf00d'           # nf-fa-times (close)
+ICON_SKIP=$'\uf0c9'           # nf-fa-minus-square — skipped
 ICON_EXCLAMATION=$'\uf12a'     # nf-fa-exclamation
 ICON_EXCLAMATION_TRIANGLE=$'\uf071' # nf-fa-exclamation-triangle
 

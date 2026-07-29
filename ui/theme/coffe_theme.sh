@@ -142,7 +142,7 @@ ${CLR_BOLD}${CLR_CARAMEL}Actions${CLR_RESET}
             --no-info >/dev/null
     fi
 }
-export -f coffe::keybinds
+[[ -n "$BASH_VERSION" ]] && export -f coffe::keybinds
 
 # --------------------------------------
 # Presets (usados por fzf::*)
