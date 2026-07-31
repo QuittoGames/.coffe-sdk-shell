@@ -16,10 +16,15 @@ mock_command() {
   local stderr="${3:-}"
   local exit_code="${4:-0}"
 
+  # Conteúdo vai para arquivos: o mock gerado fica com sintaxe sempre válida,
+  # mesmo que o stdout contenha aspas/JSON (embed direto quebraria o script).
+  printf '%s' "$stdout" > "$MOCK_DIR/$cmd.stdout"
+  printf '%s' "$stderr" > "$MOCK_DIR/$cmd.stderr"
+
   cat > "$MOCK_DIR/$cmd" <<SCRIPT
 #!/usr/bin/env bash
-[[ -n "$stdout" ]] && echo "$stdout"
-[[ -n "$stderr" ]] && echo "$stderr" >&2
+[[ -s "$MOCK_DIR/$cmd.stdout" ]] && cat "$MOCK_DIR/$cmd.stdout"
+[[ -s "$MOCK_DIR/$cmd.stderr" ]] && cat "$MOCK_DIR/$cmd.stderr" >&2
 exit $exit_code
 SCRIPT
   chmod +x "$MOCK_DIR/$cmd"
@@ -41,37 +46,31 @@ mock_command "rpm"      "bash-5.2.0-1.fc44.x86_64"
 mock_command "sudo"     ""
 mock_command "dnf"      ""
 mock_command "tmux"     ""
-mock_command "mkdir"    ""
-mock_command "touch"    ""
-mock_command "rm"       ""
 mock_command "code"     ""
 mock_command "chmod"    ""
-mock_command "grep"     ""
+
+# NOTA: grep NÃO é mockado de propósito. Comandos como `grep -q` precisam de
+# comportamento real (exit code por match) — um mock com exit 0 fixo quebra
+# cache.sh e a resolução de ENV_ROOT. grep é determinístico e sempre presente.
 
 setup_sdk_root() {
   export COFFE_SDK_ROOT="$TEST_ROOT/sdk"
-  mkdir -p "$COFFE_SDK_ROOT"/{config,ui/{colors,theme},modules,data,.cache}
 
-  cat > "$COFFE_SDK_ROOT/data/info.json" <<'JSON'
-{
-  "name": "Coffee SDK",
-  "version": "1.0.0",
-  "createdBy": "Quitto",
-  "config": { "debug": false }
-}
-JSON
+  # Recria o SDK de teste do zero a cada teste (estado limpo e determinístico)
+  rm -rf "$COFFE_SDK_ROOT"
+  mkdir -p "$COFFE_SDK_ROOT"
 
-  cat > "$COFFE_SDK_ROOT/data/dependencies.conf" <<'CONF'
-PACKAGES="bash
-coreutils
-findutils
-git
-fzf"
+  # Simula a instalação real: copia a estrutura do repo
+  cp "$REPO_ROOT/coffe.sh" "$REPO_ROOT/coffe.zsh" "$COFFE_SDK_ROOT/"
+  cp -r "$REPO_ROOT/config/." "$COFFE_SDK_ROOT/config/"
+  cp -r "$REPO_ROOT/ui/." "$COFFE_SDK_ROOT/ui/"
+  cp -r "$REPO_ROOT/modules/." "$COFFE_SDK_ROOT/modules/"
+  cp -r "$REPO_ROOT/data/." "$COFFE_SDK_ROOT/data/"
+  cp -r "$REPO_ROOT/templates/." "$COFFE_SDK_ROOT/templates/"
 
-NON_DNF=(
-  "oh-my-bash:$HOME/.oh-my-bash"
-)
-CONF
+  # Cache de teste começa vazio (não copiar o .cache real do usuário)
+  mkdir -p "$COFFE_SDK_ROOT/.cache" "$COFFE_SDK_ROOT/config/bat/themes"
+  : > "$COFFE_SDK_ROOT/.cache/packages.txt"
 }
 
 teardown() {

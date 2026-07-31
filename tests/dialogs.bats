@@ -9,32 +9,32 @@ setup() {
 }
 
 @test "ui::confirm retorna 0 para y" {
-  run bash -c 'echo "y" | ui::confirm "Test?"'
+  run ui::confirm "Test?" <<< "y"
   [ "$status" -eq 0 ]
 }
 
 @test "ui::confirm retorna 0 para Y" {
-  run bash -c 'echo "Y" | ui::confirm "Test?"'
+  run ui::confirm "Test?" <<< "Y"
   [ "$status" -eq 0 ]
 }
 
 @test "ui::confirm retorna 1 para n" {
-  run bash -c 'echo "n" | ui::confirm "Test?"'
+  run ui::confirm "Test?" <<< "n"
   [ "$status" -eq 1 ]
 }
 
 @test "ui::confirm retorna 1 para resposta vazia" {
-  run bash -c 'echo "" | ui::confirm "Test?"'
+  run ui::confirm "Test?" <<< ""
   [ "$status" -eq 1 ]
 }
 
 @test "ui::confirm retorna 1 para qualquer outra resposta" {
-  run bash -c 'echo "maybe" | ui::confirm "Test?"'
+  run ui::confirm "Test?" <<< "maybe"
   [ "$status" -eq 1 ]
 }
 
 @test "ui::confirm usa prompt padrao se nenhum for fornecido" {
-  run bash -c 'echo "" | ui::confirm'
+  run ui::confirm <<< ""
   [[ "$output" == *"Confirm?"* ]]
 }
 

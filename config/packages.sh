@@ -147,11 +147,11 @@ coffe::packages::run_in_tmux() {
     local cmd="$2"
 
     if command -v tmux &>/dev/null && [[ -n "$TMUX" ]]; then
-        tmux new-window -n "$session" "$cmd; echo; echo '[Press any key]'; read -n1"
+        tmux new-window -n "$session" "$cmd; echo; echo '[Press any key]'; read -n1" || return 1
         echo "  → tmux window: \"$session\""
         return 0
     elif command -v tmux &>/dev/null; then
-        tmux new-session -d -s "$session" "$cmd; echo; echo '[Press any key]'; read -n1"
+        tmux new-session -d -s "$session" "$cmd; echo; echo '[Press any key]'; read -n1" || return 1
         echo "  → tmux session: \"$session\""
         echo "    Attach: tmux attach -t \"$session\""
         return 0

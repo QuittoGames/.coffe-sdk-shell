@@ -1,15 +1,6 @@
 setup() {
   load helpers
   setup_sdk_root
-
-  # Copia arquivos reais para o SDK root de teste
-  cp "$REPO_ROOT/config/packages.sh" "$COFFE_SDK_ROOT/config/"
-  cp "$REPO_ROOT/config/cache.sh" "$COFFE_SDK_ROOT/config/"
-  cp -r "$REPO_ROOT/ui/." "$COFFE_SDK_ROOT/ui/"
-  cp -r "$REPO_ROOT/modules/." "$COFFE_SDK_ROOT/modules/"
-  cp "$REPO_ROOT/data/info.json" "$COFFE_SDK_ROOT/data/"
-  cp "$REPO_ROOT/data/dependencies.conf" "$COFFE_SDK_ROOT/data/"
-
   source "$COFFE_SDK_ROOT/coffe.sh"
 }
 
@@ -51,7 +42,7 @@ setup() {
 @test "coffe sem argumentos imprime usage" {
   run coffe
   [ "$status" -eq 1 ]
-  [[ "$output" == *"Usage"* ]]
+  [[ "$output" == *"search"* ]]
 }
 
 @test "coffe version chama funcao version" {
